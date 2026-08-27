@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Unzip NES Pocket
-        run: unzip NESPocket-source.zip
+        run: unzip -o NESPocket-source.zip
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -31,9 +31,15 @@ jobs:
         with:
           gradle-version: "8.7"
 
+      - name: Fix LibretroDroid version
+        working-directory: NESPocket
+        run: |
+          sed -i 's/com.github.Swordfish90:LibretroDroid:0.13.2/com.github.Swordfish90:LibretroDroid:0.14.0/' app/build.gradle.kts
+          grep LibretroDroid app/build.gradle.kts
+
       - name: Build APK
         working-directory: NESPocket
-        run: gradle assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Save APK
         uses: actions/upload-artifact@v4
